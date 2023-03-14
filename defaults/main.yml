@@ -1,0 +1,9 @@
+---
+# --------------------------------
+
+opendax_install_dir: /home/{{ opendax_username }}/opendax
+opendax_pkg_dependencies: ["curl", "git", "gpg"]
+opendax_username: app
+
+# --------------------------------
+...

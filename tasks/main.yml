@@ -1,0 +1,30 @@
+---
+# --------------------------------
+
+- name: "Install pre-requisites"
+  ansible.builtin.apt:
+    name: "{{ opendax_pkg_dependencies }}"
+    state: present
+    update_cache: true
+  become: true
+  tags: [ct-opendax]
+
+- name: "Add runtime user"
+  ansible.builtin.user:
+    name: "{{ opendax_username }}"
+    shell: /bin/bash
+    groups: ["users"]
+  become: true
+  tags: [ct-opendax]
+
+- name: "Pull repo from Git"
+  ansible.builtin.git:
+    dest: "{{ opendax_install_dir }}"
+    repo: "https://github.com/openware/opendax.git"
+    version: "2-6-stable"
+  become: true
+  become_user: "{{ opendax_username }}"
+  tags: [ct-opendax]
+
+# --------------------------------
+...
