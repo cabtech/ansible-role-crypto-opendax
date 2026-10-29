@@ -1,13 +1,30 @@
 ---
 # --------------------------------
 
+- name: "Include variables wrapper"
+  ansible.builtin.include_tasks:
+    file: variables.yml
+  tags: ["ct-opendax"]
+
+- name: "Disto/Family tasks (FF)"
+  ansible.builtin.include_tasks:
+    file: "{{ lookup('ansible.builtin.first_found', params) }}"
+  vars:
+    params:
+      files:
+      - "{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'].split('.')[0] }}.yml"
+      - "{{ ansible_facts['distribution'] }}.yml"
+      - "{{ ansible_facts['os_family'] }}.yml"
+      - "default.yml"
+  tags: ["ct-opendax"]
+
 - name: "Install pre-requisites"
   ansible.builtin.apt:
     name: "{{ opendax_pkg_dependencies }}"
     state: present
     update_cache: true
   become: true
-  tags: [ct-opendax]
+  tags: ["ct-opendax"]
 
 - name: "Add runtime user"
   ansible.builtin.user:
@@ -15,7 +32,7 @@
     shell: /bin/bash
     groups: ["users"]
   become: true
-  tags: [ct-opendax]
+  tags: ["ct-opendax"]
 
 - name: "Pull repo from Git"
   ansible.builtin.git:
@@ -24,7 +41,7 @@
     version: "2-6-stable"
   become: true
   become_user: "{{ opendax_username }}"
-  tags: [ct-opendax]
+  tags: ["ct-opendax"]
 
 # --------------------------------
 ...
